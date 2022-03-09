@@ -12,5 +12,12 @@ function Login() {
     psword: psword.value,
   };
   console.log(req);
+  console.log(JSON.stringify(req, 2, null));
   console.log('login 중 ...');
+
+  fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req),
+  });
 }
