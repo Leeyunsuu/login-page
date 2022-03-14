@@ -9,6 +9,9 @@ const output = {
   login: (req, res) => {
     res.render('home/login');
   },
+  finder: (req, res) => {
+    res.render('home/finder');
+  },
 };
 
 const proccess = {

@@ -2,7 +2,7 @@
 
 const id = document.querySelector('#id');
 const psword = document.querySelector('#psword');
-const loginBtn = document.querySelector('button');
+const loginBtn = document.querySelector('#login');
 
 loginBtn.addEventListener('click', Login);
 
