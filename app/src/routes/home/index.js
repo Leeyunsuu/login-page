@@ -9,6 +9,6 @@ router.get('/', ctrl.output.home);
 router.get('/login', ctrl.output.login);
 
 //POST
-router.post('/login', ctrl.process.login);
+router.post('/login', ctrl.proccess.login);
 
 module.exports = router;
