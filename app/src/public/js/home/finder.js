@@ -23,6 +23,8 @@ function finder() {
       if (res.success) {
         //로그인 성공 시
         location.href = '/';
+        {
+        }
       } else {
         alert(res.msg);
         // console.log(res.msg);

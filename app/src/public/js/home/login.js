@@ -57,8 +57,8 @@ function Register() {
     .then((res) => res.json())
     .then((res) => {
       if (res.success) {
-        //로그인 성공 시
-        alert(res.msg);
+        //회원가입 성공 시
+        alert(res.msg); //성공메시지
         location.href = '/login';
       } else {
         alert(res.msg);
