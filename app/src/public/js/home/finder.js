@@ -1,16 +1,15 @@
 'use strict';
 
 const id = document.querySelector('#id');
-const psword = document.querySelector('#psword');
+const email = document.querySelector('#email');
 const finderBtn = document.querySelector('#finder');
-console.log('finder');
 
 finderBtn.addEventListener('click', finder);
 
 function finder() {
   const req = {
     id: id.value,
-    psword: psword.value,
+    email: email.value,
   };
 
   fetch('/finder', {
@@ -21,10 +20,9 @@ function finder() {
     .then((res) => res.json())
     .then((res) => {
       if (res.success) {
-        //로그인 성공 시
-        location.href = '/';
-        {
-        }
+        //회원가입 성공 시
+        alert(res.msg);
+        location.href = '/login';
       } else {
         alert(res.msg);
         // console.log(res.msg);

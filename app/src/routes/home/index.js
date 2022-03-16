@@ -12,5 +12,6 @@ router.get('/finder', ctrl.output.finder);
 //POST
 router.post('/login', ctrl.proccess.login);
 router.post('/register', ctrl.proccess.register);
+router.post('/finder', ctrl.proccess.finder);
 
 module.exports = router;

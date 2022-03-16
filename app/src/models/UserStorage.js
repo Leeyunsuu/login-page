@@ -1,14 +1,22 @@
 'use strict';
 
+const fs = require('fs').promises;
+
 class UserStorage {
-  static #users = {
-    id: ['yunsuteng', 'eunjii', 'jang'],
-    psword: ['0000', '1111', '2222'],
-    name: ['이윤수', '황은지', '이름'],
-  };
+  static #GetUserInfo(id, data) {
+    const users = JSON.parse(data);
+    const idx = users.id.indexOf(id);
+    const usersKeys = Object.keys(users);
+    const userInfo = usersKeys.reduce((newUser, info) => {
+      newUser[info] = users[info][idx];
+      return newUser;
+    }, {});
+
+    return userInfo;
+  }
 
   static GetUsers(...fields) {
-    const users = this.#users;
+    // const users = this.#users;
     const newUsers = fields.reduce((newusers, field) => {
       if (users.hasOwnProperty(field)) {
         newusers[field] = users[field];
@@ -20,22 +28,20 @@ class UserStorage {
   }
 
   static GetUserInfo(id) {
-    const users = this.#users;
-    const idx = users.id.indexOf(id);
-    const userKeys = Object.keys(users);
-    const userInfo = userKeys.reduce((newUser, info) => {
-      newUser[info] = users[info][idx];
-      return newUser;
-    }, {});
-    return userInfo;
+    return fs
+      .readFile('./src/database/users.json')
+      .then((data) => {
+        return this.#GetUserInfo(id, data);
+      })
+      .catch((err) => console.log(err));
   }
 
   static SaveUserInfo(userInfo) {
-    const users = this.#users;
+    // const users = this.#users;
     users.id.push(userInfo.id);
     users.psword.push(userInfo.psword);
-    users.name.push(userInfo.emailAdress);
-    console.log(users);
+    users.email.push(userInfo.emailAdress);
+    return { success: true, msg: '회원가입 성공' };
   }
 }
 
