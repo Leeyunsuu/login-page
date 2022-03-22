@@ -11,31 +11,42 @@ class user {
     const response = {};
     const { id, psword } = await Userstorage.GetUserInfo(body.id);
     if (id) {
-      if (id === body.id && psword === body.psword) {
-        response.success = true;
+      if (id === body.id) {
+        if (psword === body.psword) {
+          response.success = true;
+          return response;
+        }
+        response.success = false;
+        response.msg = '비밀번호가 틀립니다.';
         return response;
       }
       response.success = false;
-      response.msg = '비밀번호가 틀립니다.';
+      response.msg = '존재하지 않는 아이디입니다.';
       return response;
     }
     response.success = false;
-    response.msg = '존재하지 않는 아이디입니다.';
+    response.msg = '아이디를 확인해주세요.';
     return response;
   }
 
-  register() {
+  async register() {
     const body = this.body;
     const response = {};
     if (body.id) {
       if (body.psword === body.confirmPsowrd) {
-        Userstorage.SaveUserInfo(body);
-        response.success = true;
-        response.msg = '회원가입 성공';
-        return response;
+        try {
+          await Userstorage.SaveUserInfo(body);
+          response.success = true;
+          response.msg = '회원가입 성공';
+          return response;
+        } catch (err) {
+          response.success = false;
+          response.msg = err;
+          return response;
+        }
       }
       response.success = false;
-      response.msg = '비밀번호가 다릅니다.';
+      response.msg = '2차 비밀번호를 확인해주세요.';
       return response;
     }
     response.success = false;
@@ -47,9 +58,10 @@ class user {
     const body = this.body;
     const response = {};
     const { id, psword, email } = await Userstorage.GetUserInfo(body.id);
-    console.log('test  ' + id, email);
+    // console.log('test  ' + body.emailAdress);
+    // console.log('test2  ' + JSON.stringify(email));
     if (id) {
-      if (id === body.id && email === body.email) {
+      if (id === body.id && email === body.emailAdress) {
         response.success = true;
         response.msg = `비밀번호는 ${psword}입니다.`;
         return response;

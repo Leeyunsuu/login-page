@@ -23,14 +23,14 @@ const proccess = {
     return res.json(response);
   },
 
-  register: (req, res) => {
+  register: async (req, res) => {
     const user = new User(req.body); //constructer(body)로 전달
-    const response = user.register(); //함수 실행
+    const response = await user.register(); //함수 실행
     return res.json(response);
   },
 
   finder: async (req, res) => {
-    console.log(req.body);
+    console.log('이게 왜 Adress로 불러오죠?? :  ' + JSON.stringify(req.body));
     const userInfo = new User(req.body);
     const response = await userInfo.finder();
     return res.json(response);
