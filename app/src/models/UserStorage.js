@@ -1,19 +1,12 @@
 'use strict';
 
+//Connect Databases
 const fs = require('fs').promises;
+const mysqlConnection = require('../config/mysql');
+const con = mysqlConnection.init();
+mysqlConnection.open(con);
 
 class UserStorage {
-  static #GetUserInfo(id, data) {
-    const users = JSON.parse(data);
-    const idx = users.id.indexOf(id);
-    const usersKeys = Object.keys(users);
-    const userInfo = usersKeys.reduce((newUser, info) => {
-      newUser[info] = users[info][idx];
-      return newUser;
-    }, {});
-
-    return userInfo;
-  }
   static #GetUsers(isAll, data, fields) {
     const users = JSON.parse(data);
     if (isAll) return users;
@@ -27,34 +20,46 @@ class UserStorage {
     return newUsers;
   }
 
-  static GetUsers(isAll, ...fields) {
-    return fs
-      .readFile('./src/database/users.json')
-      .then((data) => {
-        return this.#GetUsers(isAll, data, fields);
-      })
-      .catch((err) => console.log(err));
+  static GetUsers() {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM user;';
+      con.query(sql, (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows);
+      });
+    });
   }
 
   static GetUserInfo(id) {
-    return fs
-      .readFile('./src/database/users.json')
-      .then((data) => {
-        return this.#GetUserInfo(id, data);
-      })
-      .catch((err) => console.log(err));
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM user WHERE id = ?;';
+      con.query(sql, [id], (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows[0]);
+      });
+    });
   }
 
   static async SaveUserInfo(userInfo) {
-    const users = await this.GetUsers(true);
-    if (users.id.includes(userInfo.id)) {
-      throw '아이디가 이미 존재합니다.';
+    const user = await this.GetUserInfo(userInfo.id);
+    if (user) {
+      throw '이미 아이디가 존재합니다.';
     }
-    users.id.push(userInfo.id);
-    users.psword.push(userInfo.psword);
-    users.email.push(userInfo.emailAdress);
-    fs.writeFile('./src/database/users.json', JSON.stringify(users));
-    return { success: true };
+    const newUser = [];
+    // newUser.push(userInfo.id, userInfo.psword, userInfo.emailAdress);
+    return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO user VALUES ?;';
+      con.query(sql, [newUser], (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows);
+      });
+    });
   }
 }
 

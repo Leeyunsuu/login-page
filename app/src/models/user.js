@@ -33,7 +33,7 @@ class user {
     const body = this.body;
     const response = {};
     if (body.id) {
-      if (body.psword === body.confirmPsowrd) {
+      if (body.psword === body.confirmPsword) {
         try {
           await Userstorage.SaveUserInfo(body);
           response.success = true;

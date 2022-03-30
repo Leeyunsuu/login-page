@@ -13,7 +13,7 @@ function Register() {
   const req = {
     id: signupId.value,
     psword: signupPsword.value,
-    confirmPsowrd: confirmPsword.value,
+    confirmPsword: confirmPsword.value,
     emailAdress: emailAdress.value,
   };
 
