@@ -30,7 +30,6 @@ const proccess = {
   },
 
   finder: async (req, res) => {
-    console.log('이게 왜 Adress로 불러오죠?? :  ' + JSON.stringify(req.body));
     const userInfo = new User(req.body);
     const response = await userInfo.finder();
     return res.json(response);

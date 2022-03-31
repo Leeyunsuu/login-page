@@ -9,30 +9,40 @@ class user {
   async login() {
     const body = this.body;
     const response = {};
-    const { id, psword } = await Userstorage.GetUserInfo(body.id);
-    if (id) {
-      if (id === body.id) {
-        if (psword === body.psword) {
-          response.success = true;
-          return response;
-        }
-        response.success = false;
-        response.msg = '비밀번호가 틀립니다.';
-        return response;
-      }
+    try {
+      await Userstorage.GetUserInfo(body);
+      response.success = true;
+      return response;
+    } catch (err) {
       response.success = false;
-      response.msg = '존재하지 않는 아이디입니다.';
+      response.msg = err;
       return response;
     }
-    response.success = false;
-    response.msg = '아이디를 확인해주세요.';
-    return response;
+    // const { id, psword } = await Userstorage.GetUserInfo(body);
+    // if (id) {
+    //   if (id === body.id) {
+    //     if (psword === body.psword) {
+    //       response.success = true;
+    //       return response;
+    //     }
+    //     response.success = false;
+    //     response.msg = '비밀번호가 틀립니다.';
+    //     return response;
+    //   }
+    //   response.success = false;
+    //   response.msg = '존재하지 않는 아이디입니다.';
+    //   return response;
+    // }
   }
 
   async register() {
     const body = this.body;
+    console.log(body);
     const response = {};
     if (body.id) {
+      // try {
+      //   await Userstorage.GetUserInfo(body.id);
+      // } catch (err) {}
       if (body.psword === body.confirmPsword) {
         try {
           await Userstorage.SaveUserInfo(body);
@@ -45,13 +55,7 @@ class user {
           return response;
         }
       }
-      response.success = false;
-      response.msg = '2차 비밀번호를 확인해주세요.';
-      return response;
     }
-    response.success = false;
-    response.msg = '아이디를 입력바랍니다.';
-    return response;
   }
 
   async finder() {
