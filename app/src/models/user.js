@@ -2,60 +2,59 @@
 const Userstorage = require('./UserStorage');
 
 class user {
-  constructor(body) {
+  constructor(body, session) {
     this.body = body;
+    this.session = session;
   }
 
   async login() {
     const body = this.body;
+    const session = this.session;
     const response = {};
-    try {
-      await Userstorage.GetUserInfo(body);
-      response.success = true;
-      return response;
-    } catch (err) {
-      response.success = false;
-      response.msg = err;
-      return response;
-    }
-    // const { id, psword } = await Userstorage.GetUserInfo(body);
-    // if (id) {
-    //   if (id === body.id) {
-    //     if (psword === body.psword) {
-    //       response.success = true;
-    //       return response;
-    //     }
-    //     response.success = false;
-    //     response.msg = '비밀번호가 틀립니다.';
-    //     return response;
-    //   }
-    //   response.success = false;
-    //   response.msg = '존재하지 않는 아이디입니다.';
-    //   return response;
-    // }
-  }
 
-  async register() {
-    const body = this.body;
-    console.log(body);
-    const response = {};
-    if (body.id) {
-      // try {
-      //   await Userstorage.GetUserInfo(body.id);
-      // } catch (err) {}
-      if (body.psword === body.confirmPsword) {
-        try {
-          await Userstorage.SaveUserInfo(body);
-          response.success = true;
-          response.msg = '회원가입 성공';
-          return response;
-        } catch (err) {
+    const user = await Userstorage.GetUserInfo(body.id);
+    if (user) {
+      if (user.id) {
+        if (user.id === body.id) {
+          if (user.psword === body.psword) {
+            session.userName = user.username;
+            session.is_logined = true;
+            // session.save();
+            response.success = true;
+            return response;
+          }
           response.success = false;
-          response.msg = err;
+          response.msg = '비밀번호가 틀립니다.';
           return response;
         }
       }
     }
+    response.success = false;
+    response.msg = '아이디를 확인해주세요.';
+    return response;
+  }
+
+  async register() {
+    const body = this.body;
+    const response = {};
+    if (body.psword === body.confirmPsword) {
+      try {
+        await Userstorage.SaveUserInfo(body);
+        response.success = true;
+        response.msg = '회원가입 성공';
+        return response;
+      } catch (err) {
+        console.log(err);
+        if (err === 1062) {
+          response.success = false;
+          response.msg = '아이디가 이미 존재합니다.';
+        }
+        return response;
+      }
+    }
+    response.success = false;
+    response.msg = '2차 비밀번호를 확인하십시오.';
+    return response;
   }
 
   async finder() {

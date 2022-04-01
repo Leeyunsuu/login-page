@@ -1,13 +1,16 @@
 const mysql = require('mysql');
 
 const mysqlConnection = {
-  init: function () {
-    return mysql.createConnection({
+  config: function () {
+    return {
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-    });
+    };
+  },
+  init: function (config) {
+    return mysql.createConnection(config);
   },
   open: function (con) {
     con.connect((err) => {

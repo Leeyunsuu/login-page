@@ -1,9 +1,9 @@
 'use strict';
 
 //Connect Databases
-const fs = require('fs').promises;
 const mysqlConnection = require('../config/mysql');
-const con = mysqlConnection.init();
+const config = mysqlConnection.config();
+const con = mysqlConnection.init(config);
 mysqlConnection.open(con);
 
 class UserStorage {
@@ -32,39 +32,27 @@ class UserStorage {
     });
   }
 
-  static GetUserInfo(data) {
+  static GetUserInfo(id) {
     return new Promise((resolve, reject) => {
       const sql = 'SELECT * FROM user WHERE id = ?;';
-      con.query(sql, [data.id], (err, rows) => {
-        console.log(rows);
+      con.query(sql, [id], (err, rows) => {
         if (err) {
           reject(`${err}`);
         }
-        if (rows[0].psword !== undefined) {
-          if (data.psword !== rows[0].psword) {
-            reject('비밀번호가 틀립니다.');
-          }
-          resolve({ success: true });
-        }
-        reject('아이디가 존재하지 않습니다.');
+        resolve(rows[0]);
       });
     });
   }
 
-  static async SaveUserInfo(userInfo) {
-    // const user = await this.GetUserInfo(userInfo.id);
-    // if (user) {
-    //   throw '이미 아이디가 존재합니다.';
-    // }
-    const userinfo = [userInfo.id, userInfo.psword, userInfo.emailAdress];
-    console.log(userinfo);
+  static SaveUserInfo(userInfo) {
     return new Promise((resolve, reject) => {
       const sql = 'INSERT INTO user VALUES (?,?,?);';
+      const userinfo = [userInfo.id, userInfo.psword, userInfo.emailAdress];
       con.query(sql, userinfo, (err, rows) => {
         if (err) {
-          reject(`${err}`);
+          reject(err.errno);
         }
-        resolve(rows);
+        resolve({ success: true });
       });
     });
   }

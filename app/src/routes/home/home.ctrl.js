@@ -18,9 +18,13 @@ const output = {
 
 const proccess = {
   login: async (req, res) => {
-    const user = new User(req.body); //constructer(body)로 전달
+    const user = new User(req.body, req.session); //constructer(body)로 전달
     const response = await user.login(); //함수 실행
-    return res.json(response);
+    console.log(req.session);
+    req.session.save(() => {
+      return res.redirect('/');
+    });
+    // return res.json(response);
   },
 
   register: async (req, res) => {
